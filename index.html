@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+	<link rel="stylesheet" href="main.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script>
+		var wrTry = 0
+		$(document).ready(function(){
+			$('#frm').on('submit', function(e){
+				e.preventDefault();
+                var uname = $( 'input[type=text][name=uname]' ).val();
+                var psw = $( 'input[type=password][name=psw]' ).val();
+                var fullName = "";
+
+				var jqxhr = $.getJSON( "users.json", function() {})
+				.done(function() {
+					console.log( "success" );
+                    $(jqxhr.responseJSON).each(function(i, item){
+                        if (item.UserName === uname && item.Password === psw){
+                            fullName = item.FirstName + " " + item.LastName;
+                            $('#mess').text( "welcome "+fullName);
+                            $('#mess').addClass('msggrn').removeClass('msg').removeClass('msgred');
+                            $( 'button[type=submit]' ).toggle();
+                            return false;
+                        }else{
+                            $('#mess').text("looks like one of the fields is incorrect, please try again.");
+                            $('#mess').addClass('msgred').removeClass('msg').removeClass('msggrn');
+                        }
+                    });
+                    wrTry++;
+				})
+				.fail(function() {
+					console.log( "error" );
+				})
+				.always(function() {
+					console.log( "complete" );
+				});
+				if (wrTry >= 3) {
+                    $("#div1").load("page404.html");
+				}
+			});
+		});
+	</script>
+    <title>test login form</title>
+  </head>
+  <body>
+	<div class="wrapper" id="div1">
+		<form id="frm">
+			<div class="container">
+				<div class="fieldcontainer">
+				<label for="uname">Username</label>
+				<input type="text" placeholder="Enter Username" name="uname" required>
+				</div><br/>
+				<div class="fieldcontainer">
+				<label for="psw">Password</label>
+				<input type="password" placeholder="Enter Password" name="psw" required>
+				</div><br/>
+                <span class="msg" id="mess">1111111</span><br/>
+				<button type="submit">Log in</button>
+			</div>
+		</form>  
+	</div>
+  </body>
+</html>
